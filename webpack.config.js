@@ -1,6 +1,7 @@
 const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 /**
  * @type {import('webpack').Configuration}
  */
@@ -32,6 +33,53 @@ module.exports = {
             },
           },
           "ts-loader",
+        ],
+      },
+      {
+        test: /\.(le|c)ss$/,
+        exclude: /node_modules/,
+        use: [
+          // "style-loader",
+          MiniCssExtractPlugin.loader,
+          {
+            loader: "css-loader",
+            options: {
+              modules: {
+                auto: true,
+                localIdentName: "[local]--[hash:base64:5]",
+                exportLocalsConvention: "camelCase",
+              },
+            },
+          },
+          {
+            loader: "postcss-loader",
+            options: {
+              postcssOptions: {
+                plugins: [
+                  [
+                    "postcss-preset-env",
+                    {
+                      stage: 3,
+                      features: {
+                        "nesting-rules": true,
+                      },
+                      autoprefixer: {
+                        grid: true,
+                      },
+                      browsers: [
+                        "> 1%",
+                        "last 2 versions",
+                        "not ie <= 8",
+                        "ios >= 8",
+                        "android >= 4.0",
+                      ],
+                    },
+                  ],
+                ],
+              },
+            },
+          },
+          "less-loader",
         ],
       },
     ],
@@ -68,19 +116,30 @@ module.exports = {
     },
   },
   plugins: [
+    // 打包时生成一个 html 模板文件
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "./index.html"),
       filename: "index.html",
     }),
+    //
     new CleanWebpackPlugin({
       path: path.resolve(__dirname, "./dist"),
+    }),
+    new MiniCssExtractPlugin({
+      filename: "[name].[contenthash:8].css",
     }),
   ],
   devServer: {
     port: 3000,
-    open: true,
+    open: false,
     static: {
       directory: path.resolve(__dirname, "./dist"),
+    },
+    client: {
+      overlay: {
+        errors: true,
+        warnings: false,
+      },
     },
   },
 };
