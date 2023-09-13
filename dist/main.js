@@ -1,1 +1,0 @@
-(()=>{console.log("hello word");const o=typeof halo;console.log(o)})();
