@@ -1,4 +1,4 @@
-declare module "*.less" {
+declare module "*.module.less" {
   const styles: {
     [k: string]: string;
   };

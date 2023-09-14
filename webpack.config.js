@@ -2,24 +2,39 @@ const path = require("path");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const webpack = require("webpack");
+
+let isProduction = process.env.NODE_ENV === "production";
+
+console.log("> %cisProduction", "color: #218eff", " - ", isProduction);
+// const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
 /**
  * @type {import('webpack').Configuration}
  */
 module.exports = {
-  mode: "production",
-  entry: "./main",
+  mode: isProduction ? "production" : "development",
+  entry: "./src/main",
   output: {
     filename: "[name].[contenthash:8].js",
     path: path.resolve(__dirname, "./dist"),
     libraryTarget: "umd",
   },
   resolve: {
-    extensions: [".ts", ".tsx", ".js"],
+    extensions: [".ts", ".tsx", ".js", ".jsx", ".less", ".css"],
+    alias: {
+      Components: path.resolve(__dirname, "src/components/"),
+    },
+    // plugins: [
+    //   new TsconfigPathsPlugin({
+    //     configFile: path.resolve(__dirname, "tsconfig.json"),
+    //     extensions: [".ts", ".tsx", ".js", ".jsx"],
+    //   }),
+    // ],
   },
   module: {
     rules: [
       {
-        test: /.tsx?$/,
+        test: /.(t|j)sx?$/,
         exclude: /node_modules/,
         use: [
           {
@@ -32,7 +47,14 @@ module.exports = {
               ],
             },
           },
-          "ts-loader",
+          // "ts-loader",
+          {
+            loader: "imports-loader",
+            options: {
+              type: "module",
+              imports: [`default Components/For For`],
+            },
+          },
         ],
       },
       {
@@ -40,7 +62,7 @@ module.exports = {
         exclude: /node_modules/,
         use: [
           // "style-loader",
-          MiniCssExtractPlugin.loader,
+          isProduction ? MiniCssExtractPlugin.loader : "style-loader",
           {
             loader: "css-loader",
             options: {
@@ -118,7 +140,7 @@ module.exports = {
   plugins: [
     // 打包时生成一个 html 模板文件
     new HtmlWebpackPlugin({
-      template: path.resolve(__dirname, "./index.html"),
+      template: path.resolve(__dirname, "./src/index.html"),
       filename: "index.html",
     }),
     //
@@ -127,6 +149,9 @@ module.exports = {
     }),
     new MiniCssExtractPlugin({
       filename: "[name].[contenthash:8].css",
+    }),
+    new webpack.ProvidePlugin({
+      React: "react",
     }),
   ],
   devServer: {
@@ -141,5 +166,6 @@ module.exports = {
         warnings: false,
       },
     },
+    liveReload: false,
   },
 };
