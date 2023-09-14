@@ -1,7 +1,11 @@
 import "./index.less";
 import styles from "./app.module.less";
+import { useEffect } from "react";
 // import For from "Components/For";
 export default function App() {
+  useEffect(() => {
+    console.count("render app");
+  });
   return (
     <div className="appWrap">
       <span>appWrap</span>

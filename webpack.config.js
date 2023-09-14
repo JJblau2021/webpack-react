@@ -14,6 +14,7 @@ console.log("> %cisProduction", "color: #218eff", " - ", isProduction);
 module.exports = {
   mode: isProduction ? "production" : "development",
   entry: "./src/main",
+  devtool: isProduction ? false : "eval-cheap-module-source-map",
   output: {
     filename: "[name].[contenthash:8].js",
     path: path.resolve(__dirname, "./dist"),
@@ -101,7 +102,12 @@ module.exports = {
               },
             },
           },
-          "less-loader",
+          {
+            loader: "less-loader",
+            options: {
+              sourceMap: isProduction,
+            },
+          },
         ],
       },
     ],
