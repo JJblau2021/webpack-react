@@ -1,17 +1,15 @@
-const path = require("path");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const webpack = require("webpack");
+import * as path from "path";
+import { CleanWebpackPlugin } from "clean-webpack-plugin";
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
+import * as webpack from "webpack";
+import "webpack-dev-server";
 
 let isProduction = process.env.NODE_ENV === "production";
 
 console.log("> %cisProduction", "color: #218eff", " - ", isProduction);
 // const TsconfigPathsPlugin = require("tsconfig-paths-webpack-plugin");
-/**
- * @type {import('webpack').Configuration}
- */
-module.exports = {
+const config: webpack.Configuration = {
   mode: isProduction ? "production" : "development",
   entry: "./src/main",
   devtool: isProduction ? false : "eval-cheap-module-source-map",
@@ -150,9 +148,7 @@ module.exports = {
       filename: "index.html",
     }),
     //
-    new CleanWebpackPlugin({
-      path: path.resolve(__dirname, "./dist"),
-    }),
+    new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
       filename: "[name].[contenthash:8].css",
     }),
@@ -175,3 +171,5 @@ module.exports = {
     liveReload: false,
   },
 };
+
+export default config;
